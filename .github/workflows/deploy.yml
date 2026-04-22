@@ -1,0 +1,87 @@
+name: CD
+
+# ────────────────────────────────────────────────────────────
+# develop 브랜치 push → dev EC2 자동 배포
+# main    브랜치 push → prod EC2 자동 배포
+#
+# CI 워크플로우(lint + test + build)가 모두 통과한 후에만 실행됩니다.
+# ────────────────────────────────────────────────────────────
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: deploy-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true  # 연속 push 시 이전 배포 취소
+
+jobs:
+  deploy-staging:
+    name: Deploy → Staging
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'develop'
+    environment: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Staging (port 8080)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_EC2_IP }}
+          username: ubuntu
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            echo "=== [STAGING] 배포 시작: $(date) ==="
+            cd /opt/chatbot
+
+            # 최신 코드 pull
+            git fetch origin develop
+            git reset --hard origin/develop
+
+            # staging 환경 배포 (포트 8080, 별도 볼륨)
+            bash deploy.sh update staging
+
+            echo "=== [STAGING] 배포 완료: $(date) ==="
+            echo "스테이징 URL: http://$(curl -s ifconfig.me):8080"
+
+  deploy-prod:
+    name: Deploy → Prod
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    environment: production     # GitHub 환경 보호 규칙 적용 가능
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Prod EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_EC2_IP }}
+          username: ubuntu
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            echo "=== [PROD] 배포 시작: $(date) ==="
+            cd /opt/chatbot
+
+            # 최신 코드 pull
+            git fetch origin main
+            git reset --hard origin/main
+
+            # 코드 업데이트 배포 (prod 환경)
+            bash deploy.sh update prod
+
+            echo "=== [PROD] 배포 완료: $(date) ==="
