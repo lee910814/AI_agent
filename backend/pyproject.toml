@@ -1,0 +1,66 @@
+[project]
+name = "webtoon-chatbot-backend"
+version = "0.1.0"
+description = "Webtoon review chatbot backend"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.115.6",
+    "uvicorn[standard]==0.34.0",
+    "pydantic==2.10.4",
+    "pydantic-settings==2.7.1",
+    "sqlalchemy[asyncio]==2.0.36",
+    "asyncpg==0.30.0",
+    "alembic==1.14.1",
+    "pgvector==0.3.6",
+    "redis[hiredis]==5.2.1",
+    "httpx==0.28.1",
+    "python-dateutil==2.9.0.post0",
+    "python-jose[cryptography]==3.3.0",
+    "passlib[bcrypt]==1.7.4",
+    "kiwipiepy==0.20.3",
+    "presidio-analyzer==2.2.357",
+    "presidio-anonymizer==2.2.357",
+    "torch>=2.7.0",
+    "transformers>=4.48.0",
+    "langfuse==2.58.0",
+    "sentry-sdk[fastapi]==2.19.2",
+    "prometheus-fastapi-instrumentator==7.0.2",
+    "prometheus-client>=0.21.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "pytest-asyncio==0.25.0",
+    "pytest-cov==6.0.0",
+    "ruff==0.8.6",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "ASYNC"]
+ignore = [
+    "B008",   # Depends() in argument defaults — FastAPI 공식 패턴
+    "E712",   # == True/False 비교 — SQLAlchemy ORM 필터에서 필수
+]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.bandit]
+exclude_dirs = ["tests", "alembic"]
+skips = ["B101"]  # assert 사용 허용 (테스트 코드가 아닌 곳에서도 개발 단계에서 사용)
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers"
+markers = [
+    "unit: unit tests",
+    "integration: integration tests",
+]

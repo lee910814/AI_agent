@@ -1,0 +1,110 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Testing
+*_test_results.txt
+*_test_result.txt
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Node
+node_modules/
+.next/
+out/
+frontend/tsconfig.tsbuildinfo
+frontend/next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.dev
+.env.local
+.env.*.local
+.env.test
+backend/.env.test
+# .env.test.example은 커밋 대상 (템플릿)
+!backend/.env.test.example
+
+# Docker
+docker-compose.override.yml
+
+# 로컬 개발 서버 PID 파일 (setup.sh --stop용)
+.dev-pids
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Logs
+*.log
+logs/
+
+# Live2D SDK (라이선스 주의)
+frontend/public/assets/live2d/CubismSdkForWeb/
+
+# Database
+*.sql.bak
+
+# 로컬 에이전트 (로컬 전용, 배포/git 제외)
+/agents/
+
+# Claude Code 설정 (로컬 전용, 배포/git 제외)
+.claude/
+
+# 웹툰/챗봇 관련 레거시 문서 (AI 토론과 무관, git 제외)
+docs/legacy/
+
+# E2E 테스트 결과물 (로컬 전용, git 제외)
+frontend/screenshots/
+frontend/playwright-report/
+
+# 과제 제출 문서 (레거시, git 제외)
+*.docx
+
+# Claude Office Skills (로컬 전용, git 제외)
+claude-office-skills/
+
+# OMC (oh-my-claudecode) 내부 파일 (로컬 전용)
+.omc/
+
+# 임시 린트/타입체크 결과물
+frontend/lint_output.txt
+frontend/typescript_errors.txt
+
+# Claude Code 프로젝트 설정 (AI 도구 의존적, 공개 불필요)
+CLAUDE.md
+backend/CLAUDE.md
+frontend/CLAUDE.md
+.mcp.json
+
+# 테스트 스크린샷·Playwright 산출물
+tc*.png
+.playwright-mcp/
+
+# 내부 전용 문서 (디버그, 개인, 시장조사)
+docs/debug_*
+docs/proposal_*
+docs/make_*.py
+docs/market-research-*
+docs/dino_keyboard.png
+docs/debate-code-review.md
+docs/llm-models-pricing.md
+docs/ChangeLog.md

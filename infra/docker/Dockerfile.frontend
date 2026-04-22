@@ -1,0 +1,33 @@
+# syntax=docker/dockerfile:1
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY frontend/package.json frontend/package-lock.json* ./
+# npm 캐시 마운트: package.json 미변경 시 레이어 캐시 히트, 변경 시에도 재다운로드 없이 로컬 캐시 사용
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+
+COPY frontend/ .
+RUN npm run build
+
+# 프로덕션 스테이지
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/package.json /app/package-lock.json* ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./
+
+# 비-root 사용자로 실행
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

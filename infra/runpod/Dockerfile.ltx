@@ -1,0 +1,44 @@
+# RunPod Serverless Worker — LTX-Video 13B (v0.9.7) Video Generation
+#
+# Base: RunPod's PyTorch image with CUDA pre-installed.
+# This image runs on RunPod Serverless GPU workers (A40 48GB recommended).
+#
+# Model repos (~48 GB each, diffusers format):
+#   dev:       Lightricks/LTX-Video-0.9.7-dev
+#   distilled: Lightricks/LTX-Video-0.9.7-distilled
+#
+# Build:
+#   docker build -t runpod-ltx-worker -f infra/runpod/Dockerfile.ltx .
+#
+# Environment variables (set in RunPod template):
+#   MODEL_VARIANT  — 'dev' (default) or 'distilled'
+#   TORCH_DTYPE    — Torch dtype (default: bfloat16)
+#   HF_TOKEN       — HuggingFace token for gated models (optional)
+
+FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04
+
+WORKDIR /app
+
+# System dependencies (ffmpeg for video encoding)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY infra/runpod/requirements-ltx.txt /app/requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r /app/requirements.txt
+
+# Copy the handler
+COPY infra/runpod/ltx_handler.py /app/handler.py
+
+# Default environment variables
+ENV MODEL_VARIANT="dev" \
+    TORCH_DTYPE="bfloat16" \
+    HF_HOME="/app/hf_cache" \
+    PYTHONUNBUFFERED="1"
+
+# RunPod serverless workers execute the handler module directly
+CMD ["python", "-u", "/app/handler.py"]

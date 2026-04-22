@@ -1,0 +1,267 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 다크 테마 — 딥 슬레이트 */
+  --color-bg: #0f172a;
+  --color-bg-surface: #1e293b;
+  --color-bg-hover: #334155;
+  --color-bg-input: #1e293b;
+  --color-text: #cbd5e1;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-border: #334155;
+  --color-border-input: #475569;
+  --color-primary: #14b8a6;
+  --color-primary-dark: #0d9488;
+}
+
+[data-theme='light'] {
+  /* 라이트 테마 — 클린 화이트 */
+  --color-bg: #f8fafc;
+  --color-bg-surface: #ffffff;
+  --color-bg-hover: #f1f5f9;
+  --color-bg-input: #ffffff;
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-border-input: #cbd5e1;
+  --color-primary: #14b8a6;
+  --color-primary-dark: #0d9488;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: 'Pretendard', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+}
+
+@layer components {
+  .card {
+    background-color: var(--color-bg-surface);
+    @apply rounded-xl p-5;
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 border-none rounded-lg text-white text-sm font-semibold cursor-pointer transition-colors duration-200;
+    background-color: var(--color-primary);
+  }
+  .btn-primary:hover {
+    background-color: var(--color-primary-dark);
+  }
+
+  .btn-secondary {
+    @apply px-3 py-2 rounded-lg text-sm cursor-pointer transition-colors duration-200;
+    background-color: var(--color-bg-hover);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-input);
+  }
+
+  .input {
+    @apply px-3 py-2.5 rounded-lg text-sm outline-none transition-colors duration-200;
+    background-color: var(--color-bg-input);
+    color: var(--color-text);
+    border: 1px solid var(--color-border-input);
+  }
+  .input::placeholder {
+    color: var(--color-text-muted);
+  }
+  .input:focus {
+    border-color: var(--color-primary);
+  }
+
+  .textarea {
+    @apply px-3 py-2.5 rounded-lg text-sm outline-none font-[inherit] resize-y transition-colors duration-200;
+    background-color: var(--color-bg-input);
+    color: var(--color-text);
+    border: 1px solid var(--color-border-input);
+  }
+  .textarea::placeholder {
+    color: var(--color-text-muted);
+  }
+  .textarea:focus {
+    border-color: var(--color-primary);
+  }
+
+  .page-title {
+    @apply m-0 mb-6 text-2xl;
+    color: var(--color-text);
+  }
+
+  .section-title {
+    @apply text-lg m-0 mb-4;
+    color: var(--color-text);
+  }
+
+  .empty-state {
+    @apply text-center py-10 text-sm;
+    color: var(--color-text-muted);
+  }
+
+  .loading-state {
+    @apply text-center py-16;
+    color: var(--color-text-muted);
+  }
+
+  .badge {
+    @apply px-2 py-0.5 rounded-badge text-white text-xs font-semibold;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 flex justify-center items-center z-[100];
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .modal-content {
+    @apply rounded-2xl p-6 md:p-8 text-center max-w-[90vw];
+    background-color: var(--color-bg-surface);
+    color: var(--color-text);
+  }
+
+  /* ── NEMO 디자인 시스템 ───────────────────────── */
+  .nemo-hero {
+    @apply p-8 rounded-2xl text-white relative overflow-hidden;
+    /* Background handled in component */
+  }
+
+  .nemo-stat-card {
+    @apply p-[19px] rounded-2xl flex flex-col bg-white;
+    border: 2px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+  }
+
+  .nemo-topic-card {
+    @apply p-[19px] rounded-2xl transition-all duration-200;
+    background-color: var(--color-bg-surface);
+    border: 2px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+  }
+  .nemo-topic-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #000000;
+  }
+
+  .nemo-button-white {
+    @apply flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-black cursor-pointer transition-all duration-150 border-none;
+    background-color: #ffffff;
+    color: #000000;
+  }
+  .nemo-button-white:hover {
+    transform: translate(-1px, -1px);
+  }
+
+  .nemo-button-dark {
+    @apply flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-black cursor-pointer transition-all duration-150 border-none;
+    background-color: #000000;
+    color: #ffffff;
+  }
+  .nemo-button-dark:hover {
+    transform: translate(-1px, -1px);
+  }
+
+  .nemo-button-orange {
+    @apply flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-black cursor-pointer transition-all duration-150;
+    background-color: #f97316;
+    color: #ffffff;
+    border: 2px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+  }
+  .nemo-button-orange:hover {
+    transform: translate(-1px, -1px);
+  }
+
+  .nemo-button-brutal {
+    @apply flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium cursor-pointer transition-colors duration-200;
+    background-color: var(--color-bg-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+  .nemo-button-brutal:hover {
+    background-color: var(--color-bg-hover);
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Neo-Brutalism Utilities */
+  .brutal-border {
+    border: 2px solid #000000 !important;
+  }
+  .brutal-shadow {
+    box-shadow: 4px 4px 0px #000000 !important;
+  }
+  .brutal-shadow-sm {
+    box-shadow: 2px 2px 0px #000000 !important;
+  }
+  .brutal-shadow-lg {
+    box-shadow: 4px 4px 0px #000000 !important;
+  }
+
+  /* Custom Animation Utilities */
+  .fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  .slide-in-from-bottom {
+    transform: translateY(20px);
+    animation: slideInFromBottom 0.5s ease-out forwards;
+  }
+  .animate-in {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: animateIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes slideInFromBottom {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes animateIn {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  select {
+    background-color: var(--color-bg-input);
+    color: var(--color-text);
+  }
+  select option {
+    background-color: var(--color-bg-surface);
+    color: var(--color-text);
+  }
+}

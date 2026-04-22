@@ -1,0 +1,20 @@
+# RunPod Serverless worker dependencies
+
+# RunPod SDK
+runpod==1.7.1
+
+# SGLang inference engine with OpenAI-compatible server
+sglang[all]==0.4.0
+
+# HTTP client for proxying to local SGLang server
+requests==2.32.3
+
+# SGLang dependencies (pinned for reproducibility)
+torch==2.4.0
+vllm==0.6.0
+transformers==4.45.0
+tokenizers==0.20.0
+flashinfer==0.1.6
+
+# Quantization support (AWQ)
+autoawq==0.2.6

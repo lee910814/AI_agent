@@ -1,0 +1,47 @@
+# syntax=docker/dockerfile:1
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# apt 캐시 마운트: 패키지 재다운로드 없이 재사용
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends \
+    build-essential gosu \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+# pip 캐시 마운트: requirements.txt 미변경 시 레이어 캐시 히트, 변경 시에도 재다운로드 없이 로컬 캐시 사용
+# CPU-only torch 먼저 설치 (CUDA 패키지 ~3GB 절감). requirements.txt의 torch>=2.7.0 은 이미 충족되므로 재설치 안 됨.
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install "torch>=2.7.0" --index-url https://download.pytorch.org/whl/cpu && \
+    pip install -r requirements.txt
+
+COPY backend/ .
+
+# 비-root 사용자 생성 (실제 프로세스 전환은 entrypoint에서 수행)
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+# entrypoint 스크립트를 Dockerfile에서 직접 생성
+RUN cat > /entrypoint.sh << 'ENTRYPOINT_EOF'
+#!/bin/sh
+set -e
+
+# Docker named volume은 기본적으로 root 소유로 마운트됨.
+# appuser 가 /app/uploads 에 쓸 수 있도록 권한을 수정한 뒤 권한 강등.
+mkdir -p /app/uploads
+chown -R appuser:appgroup /app/uploads
+
+# 인수가 있으면 해당 명령 실행 (예: alembic upgrade head), 없으면 uvicorn 기본 실행
+if [ $# -gt 0 ]; then
+    exec gosu appuser "$@"
+else
+    exec gosu appuser uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+fi
+ENTRYPOINT_EOF
+
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 8000
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -1,0 +1,10 @@
+# 개발/테스트 전용 — 운영 환경에는 설치하지 않음
+-r requirements.txt
+
+# Test
+pytest==8.3.4
+pytest-asyncio==0.25.0
+pytest-cov==6.0.0
+
+# Lint & Format
+ruff==0.8.6
